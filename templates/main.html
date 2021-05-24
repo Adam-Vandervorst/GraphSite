@@ -114,6 +114,7 @@
         page_el.innerHTML = e.state.page
         document.title = e.state.name
         populate_page(e.state.name)
+        chose_view("content")
     }
 
     const replace_main = name => fetch(`/pages/${name}.html`)

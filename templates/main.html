@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main</title>
+</head>
+<body>
+<div id="date_area"><time id="date"></time></div>
+<div id="related_area"><nav><ul id="related_pages"></ul></nav></div>
+<div id="labels_area"><ul id="labels"></ul></div>
+<main id="page"></main>
+<footer>Footer</footer>
+
+<script>
+    const date_el = document.getElementById("date")
+    const related_pages_el = document.getElementById("related_pages")
+    const labels_el = document.getElementById("labels")
+    const page_el = document.getElementById("page")
+
+    const pages = {
+        Home: {date: "2021", labels: ["meta", "highlight"], related: ["AboutThisSite", "InterestingReferences"]},
+        AboutThisSite: {date: "2021", labels: ["meta"], related: ["AboutThisSite", "GraphSite"]},
+        GraphSite: {date: "2020", labels: ["app"], related: ["AboutThisSite", "GraphSite"]},
+        InterestingReferences: {date: "2019", labels: ["highlight"], related: ["Home"]},
+    }
+
+    const construct_related_page = related_page => {
+        const li = document.createElement("li")
+        li.innerText = related_page
+        return li
+    }
+
+    const construct_label = label => {
+        const li = document.createElement("li")
+        li.innerText = label
+        return li
+    }
+
+    const populate_page = name => {
+        date_el.innerText = pages[name].date
+        related_pages_el.replaceChildren(...pages[name].related.map(construct_related_page))
+        labels_el.replaceChildren(...pages[name].labels.map(construct_label))
+    }
+
+    window.onpopstate = e => {
+        page_el.innerHTML = e.state.page
+        document.title = e.state.name
+        populate_page(e.state.name)
+    }
+
+    const replace_body = name => fetch(`/pages/${name}.html`)
+        .then(r => r.text())
+        .then(t => {
+            page_el.innerHTML = t
+            document.title = name
+            populate_page(name)
+            history.pushState({page: t, name: name}, name, "?page=" + name)
+        })
+
+    const params = new URLSearchParams(window.location.search)
+    replace_body(params.get("page") || "Home")
+</script>
+</body>

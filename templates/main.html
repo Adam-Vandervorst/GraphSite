@@ -5,17 +5,26 @@
     <title>Main</title>
 </head>
 <body>
-<div id="date_area"><time id="date"></time></div>
-<div id="related_area"><nav><ul id="related_pages"></ul></nav></div>
-<div id="labels_area"><ul id="labels"></ul></div>
+<div id="content">
+<div id="date_area" style="background-color: lightgray; padding: 1em"><time id="date"></time></div>
+<div id="related_area" style="background-color: lightcoral; padding: 1em"><nav><ul id="related_pages"></ul></nav></div>
+<div id="labels_area" style="background-color: lightgreen; padding: 1em"><ul id="labels"></ul></div>
 <main id="page"></main>
-<footer>Footer</footer>
+</div>
+<aside id="date_view" style="display: none"><p>Timeline</p><ul id="timeline"></ul></aside>
+<aside id="related_view" style="display: none"><p>Network</p><ul id="network"></ul></aside>
+<aside id="labels_view" style="display: none"><p>Labeling</p><ul id="labeling"></ul></aside>
+<footer><p>Some footer</p><p onclick="chose_view('content')">To content</p></footer>
 
 <script>
     const date_el = document.getElementById("date")
     const related_pages_el = document.getElementById("related_pages")
     const labels_el = document.getElementById("labels")
     const page_el = document.getElementById("page")
+    const content_el = document.getElementById("content")
+    const date_view_el = document.getElementById("date_view")
+    const related_view_el = document.getElementById("related_view")
+    const labels_view_el = document.getElementById("labels_view")
 
     const pages = {
         Home: {date: "2021", labels: ["meta", "highlight"], related: ["AboutThisSite", "InterestingReferences"]},
@@ -24,22 +33,81 @@
         InterestingReferences: {date: "2019", labels: ["highlight"], related: ["Home"]},
     }
 
+    const chose_view = view => {
+        content_el.style.display = view == "content" ? "" : "none"
+        date_view_el.style.display = view == "date" ? "" : "none"
+        related_view_el.style.display = view == "related" ? "" : "none"
+        labels_view_el.style.display = view == "labels" ? "" : "none"
+    }
+
+    const construct_button = (name, action, highlight = false) => {
+        const li = document.createElement("li")
+        li.innerText = name
+        li.onclick = action
+        li.style.color = highlight ? "red" : ""
+        return li
+    }
+
+    const construct_date_view = date => {
+        const buttons = document.createElement("ul")
+        const dates = Object.values(pages).map(p => p.date).filter((d, i, ds) => ds.indexOf(d) == i).sort()
+        buttons.replaceChildren(...dates.map(d => construct_button(d, _ => construct_date_view(d), d == date)))
+        const links = document.createElement("ul")
+        links.replaceChildren(...Object.keys(pages).filter(k => date === undefined || pages[k].date == date).map(k => construct_button(k, _ => chose_view("content") || replace_main(k))))
+        date_view_el.replaceChildren(buttons, links)
+        chose_view("date")
+    }
+
+    const construct_link = (name, related) => {
+        const enclosing = document.createElement("li")
+        const from_link = document.createElement("p")
+        from_link.innerText = name
+        const links_to = document.createElement("ul")
+        links_to.replaceChildren(...related.map(r => construct_button(r, e => chose_view("content") || replace_main(r))))
+        enclosing.replaceChildren(from_link, links_to)
+        return enclosing
+    }
+
+    const construct_related_view = () => {
+        console.log("construct related view")
+        const links = document.createElement("ul")
+        links.replaceChildren(...Object.entries(pages).map(([name, {related}]) => construct_link(name, related)))
+        related_view_el.replaceChildren(links)
+        chose_view("related")
+    }
+
+    const construct_labels_view = label => {
+        const buttons = document.createElement("ul")
+        const labels = Object.values(pages).flatMap(p => p.labels).filter((d, i, ds) => ds.indexOf(d) == i).sort()
+        buttons.replaceChildren(...labels.map(l => construct_button(l, _ => construct_labels_view(l), l == label)))
+        const links = document.createElement("ul")
+        links.replaceChildren(...Object.keys(pages).filter(k => label === undefined || pages[k].labels.includes(label)).map(k => construct_button(k, _ => chose_view("content") || replace_main(k))))
+        labels_view_el.replaceChildren(buttons, links)
+        chose_view("labels")
+    }
+
     const construct_related_page = related_page => {
         const li = document.createElement("li")
         li.innerText = related_page
+        li.onclick = e => e.stopPropagation() || replace_main(related_page)
         return li
     }
 
     const construct_label = label => {
         const li = document.createElement("li")
         li.innerText = label
+        li.onclick = e => e.stopPropagation() || construct_labels_view(label)
         return li
     }
 
     const populate_page = name => {
         date_el.innerText = pages[name].date
+        date_el.onclick = e => e.stopPropagation() || construct_date_view(pages[name].date)
+        document.getElementById("date_area").onclick = _ => construct_date_view()
         related_pages_el.replaceChildren(...pages[name].related.map(construct_related_page))
+        document.getElementById("related_area").onclick = _ => construct_related_view()
         labels_el.replaceChildren(...pages[name].labels.map(construct_label))
+        document.getElementById("labels_area").onclick = _ => construct_labels_view()
     }
 
     window.onpopstate = e => {
@@ -48,7 +116,7 @@
         populate_page(e.state.name)
     }
 
-    const replace_body = name => fetch(`/pages/${name}.html`)
+    const replace_main = name => fetch(`/pages/${name}.html`)
         .then(r => r.text())
         .then(t => {
             page_el.innerHTML = t
@@ -58,6 +126,6 @@
         })
 
     const params = new URLSearchParams(window.location.search)
-    replace_body(params.get("page") || "Home")
+    replace_main(params.get("page") || "Home")
 </script>
 </body>

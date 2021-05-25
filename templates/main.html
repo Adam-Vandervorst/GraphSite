@@ -109,7 +109,7 @@
             history.pushState({page: t, name: name}, name, "?page=" + name)
         })
 
-    fetch("/graph.json").then(r => r.json()).then(j => pages = j)
+    fetch("/generated_objects.json").then(r => r.json()).then(j => pages = j)
     const params = new URLSearchParams(window.location.search)
     replace_main(params.get("page") || "Home")
 </script>

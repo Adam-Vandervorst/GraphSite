@@ -47,7 +47,7 @@
     }
 
     const construct_link = (name, related) => {
-        const [enclosing, from_link, links_to] = cel("li", "p", "ul")
+        const [enclosing, from_link, links_to] = cels("li", "p", "ul")
         from_link.innerText = name
         links_to.replaceChildren(...related
             .map(r => construct_button(r, e => replace_main(r))))
@@ -59,7 +59,7 @@
         const [links] = cels("ul")
         links.replaceChildren(...Object.entries(pages)
             .map(([name, {related}]) => construct_link(name, related)))
-        rel(related_view).replaceChildren(links)
+        rel("related_view").replaceChildren(links)
         chose_view("related")
     }
 

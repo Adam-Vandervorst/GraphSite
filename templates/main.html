@@ -31,6 +31,9 @@
         return li
     }
 
+    const to_page_button = page_id => construct_button(pages[page_id].data,
+        e => e.stopPropagation() || replace_main(pages[page_id]))
+
     const construct_date_view = date => {
         const [buttons, links] = cels("ul", "ul")
         const dates = Object.values(pages)
@@ -40,8 +43,8 @@
         buttons.replaceChildren(...dates
             .map(d => construct_button(d, _ => construct_date_view(d), d == date)))
         links.replaceChildren(...Object.keys(pages)
-            .filter(k => date === undefined || pages[k].date == date)
-            .map(k => construct_button(k, _ => replace_main(k))))
+            .filter(jd => date === undefined || pages[jd].date == date)
+            .map(jd => to_page_button(jd)))
         rel("date_view").replaceChildren(buttons, links)
         chose_view("date")
     }
@@ -50,7 +53,7 @@
         const [enclosing, from_link, links_to] = cels("li", "p", "ul")
         from_link.innerText = name
         links_to.replaceChildren(...related
-            .map(r => construct_button(r, e => replace_main(r))))
+            .map(jd => to_page_button(jd)))
         enclosing.replaceChildren(from_link, links_to)
         return enclosing
     }
@@ -58,7 +61,7 @@
     const construct_related_view = () => {
         const [links] = cels("ul")
         links.replaceChildren(...Object.entries(pages)
-            .map(([name, {related}]) => construct_link(name, related)))
+            .map(([id, {data, related}]) => construct_link(data, related)))
         rel("related_view").replaceChildren(links)
         chose_view("related")
     }
@@ -73,44 +76,47 @@
             .map(l => construct_button(l, _ => construct_labels_view(l), l == label)))
         links.replaceChildren(...Object.keys(pages)
             .filter(k => label === undefined || pages[k].labels.includes(label))
-            .map(k => construct_button(k, _ => replace_main(k))))
+            .map(jd => to_page_button(jd)))
         rel("labels_view").replaceChildren(buttons, links)
         chose_view("labels")
     }
 
-    const populate_page = name => {
-        rel("date").innerText = pages[name].date
-        rel("date").onclick = e => e.stopPropagation() || construct_date_view(pages[name].date)
+    const populate_page = page => {
+        rel("date").innerText = page.date
+        rel("date").onclick = e => e.stopPropagation() || construct_date_view(page.date)
         rel("date_area").onclick = _ => construct_date_view()
 
-        rel("related").replaceChildren(...pages[name].related
-            .map(r => construct_button(r, e => e.stopPropagation() || replace_main(r))))
+        rel("related").replaceChildren(...page.related
+            .map(jd => to_page_button(jd)))
         rel("related_area").onclick = _ => construct_related_view()
 
-        rel("labels").replaceChildren(...pages[name].labels
+        rel("labels").replaceChildren(...page.labels
             .map(l => construct_button(l, e => e.stopPropagation() || construct_labels_view(l))))
         rel("labels_area").onclick = _ => construct_labels_view()
     }
 
     window.onpopstate = e => {
-        rel("page").innerHTML = e.state.page
+        rel("page").innerHTML = e.state.html
         document.title = e.state.name
-        populate_page(e.state.name)
+        populate_page(e.state)
         chose_view("content")
     }
 
-    const replace_main = name => fetch(`/pages/${name}.html`)
+    const replace_main = page => fetch(`/pages/${page.data}.html`)
         .then(r => r.text())
         .then(t => {
             rel("page").innerHTML = t
-            document.title = name
-            populate_page(name)
+            document.title = page.data
+            populate_page(page)
             chose_view("content")
-            history.pushState({page: t, name: name}, name, "?page=" + name)
+            history.pushState({html: t, ...page}, page.data, "?page=" + page.data)
         })
 
-    fetch("/generated_objects.json").then(r => r.json()).then(j => pages = j)
     const params = new URLSearchParams(window.location.search)
-    replace_main(params.get("page") || "Home")
+    const start_id = parseInt(params.get("page")) || {{ start_id }}
+    fetch("/generated_objects.json")
+        .then(r => r.json())
+        .then(j => pages = j)
+        .then(j => replace_main(j[start_id]))
 </script>
 </body>

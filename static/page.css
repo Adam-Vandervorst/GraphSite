@@ -1,15 +1,93 @@
 body {
   --background-color: rgb(249, 249, 249);
   --contrast-text: rgb(15, 15, 15);
+  --faint-text: #666;
 }
 
 head.dark-mode + body {
   --background-color: #222222;
   --contrast-text: rgb(240, 240, 240);
+  --faint-text: #666;
 }
 
-
 body {
+    margin: 0;
     background: var(--background-color);
     color: var(--contrast-text);
+}
+
+#date_area {
+    float: left;
+    padding: 1em;
+    width: 5em;
+    text-align: center;
+    background-color: brown;
+}
+
+#related_area {
+    float: right;
+    height: 1em;
+    background-color: red;
+    padding: 1em;
+}
+
+#related {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+
+#related li {
+    float: left;
+    padding-right: 1em;
+}
+
+#labels_area {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 1em;
+    background-color: green;
+    padding: 1em;
+    transform: translateY(100%) rotate(-90deg);
+    transform-origin: top left;
+}
+
+#labels {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+
+#labels li {
+    float: left;
+    padding-left: 1em;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+
+footer * {
+  float: left;
+  margin: .25em .75em;
+}
+
+#personal_links {
+  /*color: var(--faint-text);*/
+  /*font-weight: bold;*/
+  padding: 0 2em;
+}
+
+button {
+  background-color: var(--background-color);
+  color: var(--faint-text);
+}
+
+/* main content */
+main {
+    padding-top: 4em;
+    padding-left: 4em;
 }

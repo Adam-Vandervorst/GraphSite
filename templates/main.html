@@ -13,18 +13,22 @@
 <body>
 
 <div id="content_view">
-<div id="date_area" style="background-color: lightgray; padding: 1em"><time id="date"></time></div>
-<div id="related_area" style="background-color: lightcoral; padding: 1em"><nav><ul id="related"></ul></nav></div>
-<div id="labels_area" style="background-color: lightgreen; padding: 1em"><ul id="labels"></ul></div>
+<div id="date_area"><time id="date"></time></div>
+<div id="related_area"><nav><ul id="related"></ul></nav></div>
+<div id="labels_area"><ul id="labels"></ul></div>
 <main id="page"></main>
 </div>
 <aside id="date_view" style="display: none"><p>Timeline</p><ul id="timeline"></ul></aside>
 <aside id="related_view" style="display: none"><p>Network</p><ul id="network"></ul></aside>
 <aside id="labels_view" style="display: none"><p>Labeling</p><ul id="labeling"></ul></aside>
 <footer>
-    <p>Some footer</p>
-    <p onclick="chose_view('content')">To content</p>
-    <button onclick="localStorage.setItem('theme', document.head.classList.toggle('dark-mode') ? 'dark' : 'light')">toggle theme</button>
+    <nav id="personal_links">
+        <a>email</a>
+        <a>twitter</a>
+        <a>resume</a>
+    </nav>
+    <button onclick="chose_view('content')">to content</button>
+    <button onclick="localStorage.setItem('theme', document.head.classList.toggle('dark-mode') ? 'dark' : 'light')">toggle dark</button>
 </footer>
 <script src="main.js"></script>
 </body>

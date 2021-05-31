@@ -86,8 +86,38 @@ button {
   color: var(--faint-text);
 }
 
+
 /* main content */
 main {
     padding-top: 4em;
     padding-left: 4em;
+}
+
+main h1 {
+    color: var(--faint-text);
+    font-size: 2.5em;
+}
+
+main p {
+    text-align: justify;
+    padding-left: 20%;
+    padding-right: 20%;
+}
+
+@media screen and (max-width: 1000px) {
+  main {
+    padding: 5vmax;
+  }
+
+  main h1 {
+    font-size: 5vmax;
+    margin-top: 2vh;
+    margin-bottom: 2vh;
+  }
+
+  main p {
+    text-align: justify;
+    padding-left: 8%;
+    padding-right: 8%;
+  }
 }

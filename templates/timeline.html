@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block header %}
+    <title>Timeline</title>
+    <link rel="stylesheet" href="/timeline.css">
+{% endblock %}
+
+{% block body %}
+<ol>
+{% for date, page_ids in date_page_ids.items() %}
+    <li>
+        {% if date == chosen_date %} > {% endif %} {{ date }}
+        <ul>
+            {% for page_id in page_ids %}
+                <li>
+                    <a href="/pages/{{ page_id }}">
+                        {{ pages[page_id]['data'] }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </li>
+{% endfor %}
+</ol>
+{% endblock %}

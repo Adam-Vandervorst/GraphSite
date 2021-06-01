@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block header %}
+    <title>Labels</title>
+    <link rel="stylesheet" href="/labels.css">
+{% endblock %}
+
+{% block body %}
+<ol>
+{% for label, page_ids in labels_page_ids.items() %}
+    <li>
+        {% if label == chosen_label %} > {% endif %} {{ label }}
+        <ul>
+            {% for page_id in page_ids %}
+                <li>
+                    <a href="/pages/{{ page_id }}">
+                        {{ pages[page_id]['data'] }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </li>
+{% endfor %}
+</ol>
+{% endblock %}

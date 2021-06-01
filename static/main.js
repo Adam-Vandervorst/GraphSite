@@ -76,23 +76,6 @@ const populate_page = page => {
     rel("labels_area").onclick = _ => construct_labels_view()
 }
 
-window.onpopstate = e => {
-    rel("page").innerHTML = e.state.html
-    document.title = e.state.name
-    populate_page(e.state)
-    chose_view("content")
-}
-
-const replace_main = page => fetch(`/pages/${page.data}.html`)
-    .then(r => r.text())
-    .then(t => {
-        rel("page").innerHTML = t
-        document.title = page.data
-        populate_page(page)
-        chose_view("content")
-        history.pushState({html: t, ...page}, page.data, "?page=" + page.data)
-    })
-
 const params = new URLSearchParams(window.location.search)
 const start_id = parseInt(params.get("page")) || 0
 fetch("/generated_objects.json")

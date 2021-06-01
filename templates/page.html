@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block header %}
+    <title>{{ data }}</title>
+    <link rel="stylesheet" href="/page.css">
+{% endblock %}
+
+{% block body %}
+<div id="content_view">
+    <div id="date_area">
+        <a href="/timeline/{{ date }}?from_id={{ id }}">
+            <time id="date">
+                {{ date }}
+            </time>
+        </a>
+    </div>
+    <div id="related_area">
+        <nav>
+            <ul id="related">
+                {% for rpage_id in related %}
+                    <li>
+                        <a href="/pages/{{ rpage_id }}">
+                            {{ pages[rpage_id]['data'] }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </nav>
+    </div>
+    <div id="labels_area">
+        <ul id="labels">
+            {% for label in labels %}
+                <li>
+                    <a href="/labels/{{ label }}?from_id={{ id }}">
+                        {{ label }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <main id="page">
+        {% block main %}
+            EMPTY
+        {% endblock %}
+    </main>
+</div>
+{% endblock %}

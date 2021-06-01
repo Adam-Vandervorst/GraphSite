@@ -1,0 +1,39 @@
+body {
+  --background-color: rgb(249, 249, 249);
+  --contrast-text: rgb(15, 15, 15);
+  --faint-text: #666;
+}
+
+head.dark-mode + body {
+  --background-color: #222222;
+  --contrast-text: rgb(240, 240, 240);
+  --faint-text: #666;
+}
+
+body {
+    margin: 0;
+    background: var(--background-color);
+    color: var(--contrast-text);
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+
+footer * {
+  float: left;
+  margin: .25em .75em;
+}
+
+#personal_links {
+  /*color: var(--faint-text);*/
+  /*font-weight: bold;*/
+  padding: 0 2em;
+}
+
+button {
+  background-color: var(--background-color);
+  color: var(--faint-text);
+}

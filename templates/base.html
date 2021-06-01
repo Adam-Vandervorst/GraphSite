@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/common.css">
+    {% block header %}
+    {% endblock %}
+    <script>
+    if ((localStorage.getItem("theme") ||
+        (window.matchMedia("(prefers-color-scheme: dark)").matches && "dark")) == "dark")
+        document.head.classList.toggle("dark-mode")
+    </script>
+</head>
+<body>
+{% block body %}
+{% endblock %}
+<footer>
+    <nav id="personal_links">
+        <a>email</a>
+        <a>twitter</a>
+        <a>resume</a>
+    </nav>
+    {% if from_page_id is defined and from_page_id != None %}
+        <a href="/pages/{{ from_page_id }}">
+            {{ pages[from_page_id]['data'] }}
+        </a>
+    {% endif %}
+
+    <button onclick="localStorage.setItem('theme', document.head.classList.toggle('dark-mode') ? 'dark' : 'light')">
+        toggle dark
+    </button>
+</footer>
+</body>
+</html>

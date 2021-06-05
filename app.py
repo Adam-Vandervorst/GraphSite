@@ -28,7 +28,7 @@ def timeline_view(date):
     for page in adjacency.values():
         date_page_ids[page['date']].append(page['id'])
     if date not in date_page_ids:
-        date = None
+        return flask.redirect("/timeline")
     from_page_id = flask.request.args.get('from_id', None, int)
     return flask.render_template("timeline.html", chosen_date=date, date_page_ids=date_page_ids, from_page_id=from_page_id, pages=adjacency)
 
@@ -41,7 +41,7 @@ def labels_view(label):
         for page_label in page['labels']:
             labels_page_ids[page_label].append(page['id'])
     if label not in labels_page_ids:
-        label = None
+        return flask.redirect("/labels")
     from_page_id = flask.request.args.get('from_id', None, int)
     return flask.render_template("labels.html", chosen_label=label, labels_page_ids=labels_page_ids, from_page_id=from_page_id, pages=adjacency)
 

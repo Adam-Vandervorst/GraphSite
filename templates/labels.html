@@ -5,18 +5,27 @@
 {% endblock %}
 
 {% block body %}
-<ol>
-{% for label, page_ids in labels_page_ids.items() %}
+<ol> 
+{% for label in labels_page_ids.keys() %}
     <li>
-        {% if label == chosen_label %} > {% endif %} {{ label }}
+        <a href="/labels/{{ label }}" class="{% if date == chosen_date %}chosen{% endif %}">
+            {{ label }}        
+        </a>
+    </li>
+{% endfor %}
+</ol>
+<ol>
+{% for page_id in labels_page_ids[chosen_label] %}
+    <li>
+        <a href="/pages/{{ page_id }}">
+            {{ pages[page_id]['data'] }}
+        </a>
         <ul>
-            {% for page_id in page_ids %}
-                <li>
-                    <a href="/pages/{{ page_id }}">
-                        {{ pages[page_id]['data'] }}
-                    </a>
-                </li>
-            {% endfor %}
+        {% for label in pages[page_id]['labels'] %}
+            <li>
+                {{ label }}
+            </li>
+        {% endfor %}
         </ul>
     </li>
 {% endfor %}

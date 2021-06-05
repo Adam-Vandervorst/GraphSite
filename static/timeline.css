@@ -1,3 +1,7 @@
 ol {
     list-style-type: none;
 }
+
+.chosen {
+    color: red;
+}

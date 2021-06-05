@@ -5,19 +5,21 @@
 {% endblock %}
 
 {% block body %}
-<ol>
-{% for date, page_ids in date_page_ids.items() %}
+<ol> 
+{% for date in date_page_ids.keys() %}
     <li>
-        {% if date == chosen_date %} > {% endif %} {{ date }}
-        <ul>
-            {% for page_id in page_ids %}
-                <li>
-                    <a href="/pages/{{ page_id }}">
-                        {{ pages[page_id]['data'] }}
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
+        <a href="/timeline/{{ date }}" class="{% if date == chosen_date %}chosen{% endif %}">
+            {{ date }}        
+        </a>
+    </li>
+{% endfor %}
+</ol>
+<ol>
+{% for page_id in date_page_ids[chosen_date] %}
+    <li>
+        <a href="/pages/{{ page_id }}">
+            {{ pages[page_id]['data'] }}
+        </a>
     </li>
 {% endfor %}
 </ol>

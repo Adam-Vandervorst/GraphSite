@@ -5,6 +5,17 @@
     <link rel="stylesheet" href="/common.css">
     {% block header %}
     {% endblock %}
+    <noscript>
+        <style>
+            .show_js {
+                display: none;
+            }
+
+            .show_no_js {
+                display: unset;
+            }
+        </style>
+    </noscript>
     <script>
     if ((localStorage.getItem("theme") ||
         (window.matchMedia("(prefers-color-scheme: dark)").matches && "dark")) == "dark")
@@ -26,7 +37,7 @@
         </a>
     {% endif %}
 
-    <button onclick="localStorage.setItem('theme', document.head.classList.toggle('dark-mode') ? 'dark' : 'light')">
+    <button class="requires_js" onclick="localStorage.setItem('theme', document.head.classList.toggle('dark-mode') ? 'dark' : 'light')">
         toggle dark
     </button>
 </footer>

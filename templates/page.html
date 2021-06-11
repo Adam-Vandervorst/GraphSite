@@ -7,7 +7,7 @@
 {% block body %}
 <div id="content_view">
     <div id="date_area">
-        <a href="/timeline/{{ date }}?from_id={{ id }}">
+        <a href="{{ url_for("date_view", filter=date, from_id=id) }}">
             <time id="date">
                 {{ date }}
             </time>
@@ -30,7 +30,7 @@
         <ul id="labels">
             {% for label in labels %}
                 <li>
-                    <a href="/labels/{{ label }}?from_id={{ id }}">
+                    <a href="{{ url_for("labels_view", filter=date, from_id=id) }}">
                         {{ label }}
                     </a>
                 </li>

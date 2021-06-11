@@ -5,3 +5,7 @@ ol {
 .chosen {
     color: red;
 }
+
+.hidden {
+    display: none;
+}

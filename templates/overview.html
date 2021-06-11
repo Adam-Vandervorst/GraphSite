@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block header %}
+    <title>{{ field_name }}</title>
+    <link rel="stylesheet" href="/{{ field_name }}.css">
+{% endblock %}
+
+{% block body %}
+<ol class="show_js">
+{% for field in field_page_ids.keys() %}
+    <li>
+        <button class="toggle" onclick="toggle('{{ field }}', true)">{{ field }}</button>
+    </li>
+{% endfor %}
+</ol>
+{% block list %}
+{% endblock %}
+<script>
+    URLSearchParams.prototype.remove = function (name, to_remove) {
+        const values = this.getAll(name)
+        this.delete(name)
+        for (const v of values)
+            if (v != to_remove)
+                params.append(name, v)
+    }
+
+    function toggle(value, onehot) {
+        let on
+        for (const t of document.getElementsByClassName("toggle"))
+            if (t.textContent == value)
+                on = onehot ? t.classList.toggle("chosen", true) : t.classList.toggle("chosen")
+            else if (onehot && t.classList.contains("chosen"))
+                toggle(t.textContent, false)
+
+        for (const d of document.getElementsByClassName(value))
+            d.classList.toggle("show_no_js", !on)
+
+        const params = new URLSearchParams(window.location.search)
+        if (onehot) params.set('filter', value);
+        else on && !params.getAll('filter').includes(value) ?
+            params.append('filter', value) :
+            params.remove('filter', value)
+
+        history.pushState({}, history.title, `${window.location.origin}${window.location.pathname}?${params}`)
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    console.log(params)
+    if (params.has('filter')) toggle(params.get('filter'), true)
+</script>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "overview.html" %}
+{% block list %}
+<ol>
+{% for page_id, fields in page_id_fields.items() %}
+    <li class="show_no_js {{ fields | join(" ") }}">
+        <a href="/pages/{{ page_id }}">
+            {{ pages[page_id]['data'] }}
+        </a>
+        <ul>
+        {% for field in fields %}
+            <li>
+                {{ field }}
+            </li>
+        {% endfor %}
+        </ul>
+    </li>
+{% endfor %}
+</ol>
+<script>
+    URLSearchParams.prototype.remove = function (name, to_remove) {
+        const values = this.getAll(name)
+        this.delete(name)
+        for (const v of values)
+            if (v != to_remove)
+                params.append(name, v)
+    }
+
+    function toggle(value) {
+        let on
+        for (const t of document.getElementsByClassName("toggle"))
+            if (t.textContent == value)
+                on = t.classList.toggle("chosen")
+
+        for (const d of document.getElementsByClassName(value))
+            d.classList.toggle("show_no_js", !on)
+
+        if (on && !params.getAll('filter').includes(value))
+            params.append('filter', value)
+        else
+            params.remove('filter', value)
+
+        history.pushState({}, history.title, `${window.location.origin}${window.location.pathname}?${params}`)
+    }
+
+    const params = new URLSearchParams(window.location.search)
+    params.getAll('filter').forEach(f => toggle(f))
+</script>
+{% endblock %}
+A

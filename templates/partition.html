@@ -1,0 +1,37 @@
+{% extends "overview.html" %}
+{% block list %}
+<ol>
+{% for field, page_ids in field_page_ids.items() %}
+    <li class="{{ field }}">
+        <noscript>
+            {{ field }}
+        </noscript>
+        <ul>
+        {% for page_id in page_ids %}
+            <li>
+                <a href="/pages/{{ page_id }}">
+                    {{ pages[page_id]['data'] }}
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+    </li>
+{% endfor %}
+</ol>
+<script>
+    function toggle(value) {
+        for (const t of document.getElementsByClassName("toggle")) {
+            t.classList.toggle("chosen", t.textContent == value)
+            for (const d of document.getElementsByClassName(t.textContent))
+                d.classList.toggle("show_no_js", t.textContent != value)
+        }
+
+        params.set('filter', value)
+
+        history.pushState({}, history.title, `${window.location.origin}${window.location.pathname}?${params}`)
+    }
+
+    const params = new URLSearchParams(window.location.search)
+    if (params.has('filter')) toggle(params.get('filter'))
+</script>
+{% endblock %}

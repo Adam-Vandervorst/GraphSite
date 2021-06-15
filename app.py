@@ -6,7 +6,9 @@ from HEdit.utils import json, HDict
 
 
 graph = HDict.load_from_path("site_graph.json")
-adjacency = graph.as_object_adjacency(*graph.split_node_types())
+tp1, tp2, tp3 = graph.split_node_types()
+print(tp2)
+adjacency = graph.as_object_adjacency(tp1, tp2, tp3)
 
 with open("./static/generated_objects.json", 'w') as w_file:
     json.dump(adjacency, w_file)
@@ -27,6 +29,18 @@ def label_context(field_name):
     return dict(field_type="label", field_name=field_name, page_id_fields=page_id_fields, fields=fields)
 
 
+def make_view(name, context_type):
+    context = {
+        'label': label_context,
+        'partition': partition_context
+    }[context_type](name)
+
+    @app.route(f"/{name}", endpoint=f"{name}_view", methods=['GET'])
+    def view():
+        return flask.render_template(f"{context_type}.html", **context, pages=adjacency)
+    return view
+
+
 app = flask.Flask(__name__, static_url_path='', static_folder='static')
 
 
@@ -36,25 +50,12 @@ def pages_view(page_id):
     return flask.render_template(f"/pages/{adjacency[page_id]['data']}.html", **adjacency[page_id], pages=adjacency)
 
 
-date_context = partition_context('date')
-@app.route('/date')
-def date_view():
-    overview_context = dict(
-        from_page_id=flask.request.args.get('from_id', None, int),
-        filters=flask.request.args.getlist('filter')
-    )
-    return flask.render_template("partition.html", **date_context, **overview_context, pages=adjacency)
+show = {8: 'label', 4: 'partition'}
 
 
-labels_context = label_context('labels')
-@app.route('/labels')
-def labels_view():
-    overview_context = dict(
-        from_page_id=flask.request.args.get('from_id', None, int),
-        filters=flask.request.args.getlist('filter')
-    )
-    return flask.render_template("label.html", **labels_context, **overview_context, pages=adjacency)
-
+for i, d in graph.get_info(tp2, 'id', 'data'):
+    if i in show:
+        make_view(d, show[i])
 
 if __name__ == '__main__':
     app.run(debug=True)

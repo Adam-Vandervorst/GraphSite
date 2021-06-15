@@ -14,4 +14,29 @@
 </ol>
 {% block list %}
 {% endblock %}
+{% block update_function %}
+<script>
+    function update_params(params, v, bs) {
+        throw Error("`update_params` needs to be overwritten by child templates.")
+    }
+</script>
+{% endblock %}
+<script>
+    URLSearchParams.prototype.remove = function (name, to_remove) {
+        const values = this.getAll(name)
+        this.delete(name)
+        for (const v of values)
+            if (v != to_remove)
+                this.append(name, v)
+    }
+
+    function toggle(value) {
+        update_params(params, value, document.getElementsByClassName("toggle"))
+
+        history.replaceState({}, history.title, `${window.location.origin}${window.location.pathname}?${params}`)
+    }
+
+    const params = new URLSearchParams(window.location.search)
+    params.getAll('filter').forEach(toggle)
+</script>
 {% endblock %}

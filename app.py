@@ -47,7 +47,8 @@ app = flask.Flask(__name__, static_url_path='', static_folder='static')
 @app.route('/', defaults={'page_id': 0})
 @app.route('/pages/<int:page_id>')
 def pages_view(page_id):
-    return flask.render_template(f"/pages/{adjacency[page_id]['data']}.html", **adjacency[page_id], pages=adjacency)
+    return flask.render_template("page.html", **adjacency[page_id], pages=adjacency,
+                                 main=flask.render_template(f"pages/{adjacency[page_id]['data']}.html"))
 
 
 show = {8: 'label', 4: 'partition'}

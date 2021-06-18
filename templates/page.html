@@ -38,9 +38,9 @@
         </ul>
     </div>
     <main id="page">
-        {% block main %}
-            EMPTY
-        {% endblock %}
+        {% autoescape false %}
+        {{ main }}
+        {% endautoescape %}
     </main>
 </div>
 {% endblock %}

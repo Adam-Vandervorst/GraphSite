@@ -1,3 +1,6 @@
 [submodule "HEdit"]
 	path = HEdit
 	url = https://github.com/Adam-Vandervorst/HEdit.git
+[submodule "PicoStaticServer"]
+	path = PicoStaticServer
+	url = https://github.com/Adam-Vandervorst/PicoStaticServer

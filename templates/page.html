@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% block header %}
     <title>{{ data }}</title>
-    <link rel="stylesheet" href="/page.css">
+    <link rel="stylesheet" href="css/page.css">
 {% endblock %}
 
 {% block body %}
 <div id="content_view">
     <div id="date_area">
-        <a href="{{ url_for("date_view", filter=date, from_id=id) }}">
+        <a href="{{ url_for("date view", filter=date, from_id=id) }}">
             <time id="date">
                 {{ date }}
             </time>
@@ -17,11 +17,11 @@
         <nav>
             <ul id="related">
                 {% for rpage_id in related %}
-                    <li>
-                        <a href="/pages/{{ rpage_id }}">
-                            {{ pages[rpage_id]['data'] }}
-                        </a>
-                    </li>
+                <li>
+                    <a href="{{ url_for(pages[rpage_id]['data']) }}">
+                        {{ pages[rpage_id]['data'] }}
+                    </a>
+                </li>
                 {% endfor %}
             </ul>
         </nav>
@@ -29,18 +29,16 @@
     <div id="labels_area">
         <ul id="labels">
             {% for label in labels %}
-                <li>
-                    <a href="{{ url_for("labels_view", filter=label, from_id=id) }}">
-                        {{ label }}
-                    </a>
-                </li>
+            <li>
+                <a href="{{ url_for("labels view", filter=label, from_id=id) }}">
+                    {{ label }}
+                </a>
+            </li>
             {% endfor %}
         </ul>
     </div>
     <main id="page">
-        {% autoescape false %}
-        {{ main }}
-        {% endautoescape %}
+        {% include main +%}
     </main>
 </div>
 {% endblock %}

@@ -1,2 +1,5 @@
 # Project exclude paths
 /venv/
+/out/*.html
+generated_objects.json
+integration_test.py

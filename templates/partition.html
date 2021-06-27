@@ -22,7 +22,7 @@
         <ul>
         {% for page_id in page_ids %}
             <li>
-                <a href="/pages/{{ page_id }}">
+                <a href="{{ url_for(pages[page_id]['data']) }}">
                     {{ pages[page_id]['data'] }}
                 </a>
             </li>

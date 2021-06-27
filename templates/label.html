@@ -21,7 +21,7 @@
 <ol>
 {% for page_id, fields in page_id_fields.items() %}
     <li class="show_no_js {{ fields | join(" ") }}">
-        <a href="/pages/{{ page_id }}">
+        <a href="{{ url_for(pages[page_id]['data']) }}">
             {{ pages[page_id]['data'] }}
         </a>
         <ul>

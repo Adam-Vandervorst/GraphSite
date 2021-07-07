@@ -6,9 +6,10 @@ from HEdit.utils import json, HDict
 
 
 class Generator:
-    def __init__(self, graph_file, pages_path="pages", out_path="out"):
+    def __init__(self, graph_file, pages_path="pages", out_path="out", as_index=None):
         self.pages_path = pages_path
         self.out_path = out_path
+        self.as_index = as_index
 
         self.env = Environment(loader=FileSystemLoader(["templates", pages_path]),
                                autoescape=False, trim_blocks=True, lstrip_blocks=True)
@@ -34,9 +35,9 @@ class Generator:
 
         return dict(field_type="label", field_name=field_name, page_id_fields=page_id_fields, fields=fields)
 
-    @staticmethod
-    def url_for(endpoint, **kwargs):
-        return f"/{endpoint.replace(' ', '-')}{'?'*bool(kwargs)}{'&'.join(f'{k}={v}' for k, v in kwargs.items())}"
+    def url_for(self, endpoint, **params):
+        endpoint = endpoint if endpoint == self.as_index else "index"
+        return f"/{endpoint.replace(' ', '-')}{'?'*bool(params)}{'&'.join(f'{k}={v}' for k, v in params.items())}"
 
     def make_view(self, name, context_type):
         context = {
@@ -63,5 +64,5 @@ class Generator:
 
 
 if __name__ == '__main__':
-    g = Generator("site_graph.json")
+    g = Generator("site_graph.json", as_index="Home")
     g.generate(labels='label', date='partition')

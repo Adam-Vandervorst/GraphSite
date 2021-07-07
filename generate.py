@@ -1,3 +1,4 @@
+import os
 from collections import defaultdict
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -15,7 +16,7 @@ class Generator:
         self.pages_path = pages_path
         self.as_index = as_index
 
-        self.env = Environment(loader=FileSystemLoader(["templates", pages_path]),
+        self.env = Environment(loader=FileSystemLoader([os.path.join(os.path.dirname(__file__), "templates"), pages_path]),
                                autoescape=False, trim_blocks=True, lstrip_blocks=True)
 
     def save(self, path):
@@ -47,13 +48,15 @@ class Generator:
 
     def generate(self, out_path, **show):
         for i, d in self.graph.get_info(self.tp3, 'id', 'data'):
-            with open(f"{out_path}/{'index' if d == self.as_index else d}.html", 'w') as f:
+            filename = f"{'index' if d == self.as_index else d.replace(' ', '-')}.html"
+            with open(os.path.join(out_path, filename), 'w') as f:
                 f.write(self.pages_view(i))
 
         for i, d in self.graph.get_info(self.tp2, 'id', 'data'):
-            if d in show:
-                with open(f"{out_path}/{d}-view.html", 'w') as f:
-                    f.write(self.make_view(d, show[d]))
+            if d not in show: continue
+            filename = f"{d}-view.html"
+            with open(os.path.join(out_path, filename), 'w') as f:
+                f.write(self.make_view(d, show[d]))
 
 
 if __name__ == '__main__':

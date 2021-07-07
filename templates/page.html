@@ -7,19 +7,19 @@
 {% block body %}
 <div id="content_view">
     <div id="date_area">
-        <a href="{{ url_for("date view", filter=date, from_id=id) }}">
+        <a href="{{ url_for("date view", filter=page.date, from_id=page.id) }}">
             <time id="date">
-                {{ date }}
+                {{ page.date }}
             </time>
         </a>
     </div>
     <div id="related_area">
         <nav>
             <ul id="related">
-                {% for rpage_id in related %}
+                {% for rpage in page.related %}
                 <li>
-                    <a href="{{ url_for(pages[rpage_id]['data']) }}">
-                        {{ pages[rpage_id]['data'] }}
+                    <a href="{{ url_for(rpage.data) }}">
+                        {{ rpage.data }}
                     </a>
                 </li>
                 {% endfor %}
@@ -28,9 +28,9 @@
     </div>
     <div id="labels_area">
         <ul id="labels">
-            {% for label in labels %}
+            {% for label in page.labels %}
             <li>
-                <a href="{{ url_for("labels view", filter=label, from_id=id) }}">
+                <a href="{{ url_for("labels view", filter=label, from_id=page.id) }}">
                     {{ label }}
                 </a>
             </li>

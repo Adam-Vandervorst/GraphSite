@@ -3,21 +3,26 @@ from collections import defaultdict
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from HEdit.utils import json, HDict
-
 
 class Generator:
-    def __init__(self, graph_file, pages_path="pages", as_index=None):
-        self.graph = HDict.load_from_path(graph_file)
-        self.tp1, self.tp2, self.tp3 = self.graph.node_types()
-        cls = self.graph.synthesize_structure(self.tp1, self.tp2, self.tp3)
-        self.adjacency = {o.id: o for o in self.graph.as_objects(self.tp1, self.tp2, self.tp3, cls)}
-
-        self.pages_path = pages_path
+    def __init__(self, pages_dir="pages", as_index=None):
         self.as_index = as_index
-
-        self.env = Environment(loader=FileSystemLoader([os.path.join(os.path.dirname(__file__), "templates"), pages_path]),
+        self.adjacency = {}
+        templates_dir = os.path.join(os.path.dirname(__file__), "templates")
+        self.env = Environment(loader=FileSystemLoader([templates_dir, pages_dir]),
                                autoescape=False, trim_blocks=True, lstrip_blocks=True)
+
+    @classmethod
+    def from_HEdit(cls, graph_file, **kwargs):
+        from HEdit.utils import json, HDict
+
+        graph = HDict.load_from_path(graph_file)
+        tp1, tp2, tp3 = graph.node_types()
+        struct = graph.synthesize_structure(tp1, tp2, tp3)
+        objects = graph.as_objects(tp1, tp2, tp3, struct)
+        ins = cls(**kwargs)
+        ins.adjacency = {o.id: o for o in objects}
+        return ins
 
     def url_for(self, endpoint, **params):
         return f"/{endpoint.replace(' ', '-')*(endpoint != self.as_index)}{'?'*bool(params)}{'&'.join(f'{k}={v}' for k, v in params.items())}"
@@ -60,5 +65,5 @@ class Generator:
 
 
 if __name__ == '__main__':
-    g = Generator("site_graph.json", as_index="Home")
+    g = Generator.from_HEdit("site_graph.json", as_index="Home")
     g.generate("out", links=['related', 'inspired', 'subseded'], partitions=['date'], labels=['labels'])

@@ -1,4 +1,4 @@
-#date_area {
+#partition_area {
     float: left;
     padding: 1em;
     width: 5em;
@@ -6,25 +6,25 @@
     background-color: brown;
 }
 
-#related_area {
+#link_area {
     float: right;
     height: 1em;
     background-color: red;
     padding: 1em;
 }
-
-#related {
-    padding: 0;
+#link_area ul {
+  float: left;
+      padding: 0;
     margin: 0;
     list-style-type: none;
 }
 
-#related li {
+#link_area ul li {
     float: left;
     padding-right: 1em;
 }
 
-#labels_area {
+#label_area {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -35,13 +35,13 @@
     transform-origin: top left;
 }
 
-#labels {
+#label_area ul {
     padding: 0;
     margin: 0;
     list-style-type: none;
 }
 
-#labels li {
+#label_area ul li {
     float: left;
     padding-left: 1em;
 }

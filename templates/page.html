@@ -6,36 +6,40 @@
 
 {% block body %}
 <div id="content_view">
-    <div id="date_area">
-        <a href="{{ url_for("date view", filter=page.date, from_id=page.id) }}">
-            <time id="date">
-                {{ page.date }}
-            </time>
-        </a>
-    </div>
-    <div id="related_area">
+    <div id="link_area">
         <nav>
-            <ul id="related">
-                {% for rpage in page.related %}
-                <li>
-                    <a href="{{ url_for(rpage.data) }}">
-                        {{ rpage.data }}
-                    </a>
-                </li>
-                {% endfor %}
-            </ul>
+        {% for link_field in link_fields %}
+        <ul id="{{ link_field }}">
+            {% for rpage in page[link_field] %}
+            <li>
+                <a href="{{ url_for(rpage.data) }}">
+                    {{ rpage.data }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endfor %}
         </nav>
     </div>
-    <div id="labels_area">
+    <div id="partition_area">
+        {% for partition_field in partition_fields %}
+        <a href="{{ url_for(partition_field, filter=page[partition_field], from_id=page.id) }}">
+            {{ page.date }}
+        </a>
+        {% endfor %}
+    </div>
+    <div id="label_area">
+        {% for label_field in label_fields %}
         <ul id="labels">
-            {% for label in page.labels %}
+            {% for label in page[label_field] %}
             <li>
-                <a href="{{ url_for("labels view", filter=label, from_id=page.id) }}">
+                <a href="{{ url_for(label_field, filter=label, from_id=page.id) }}">
                     {{ label }}
                 </a>
             </li>
             {% endfor %}
         </ul>
+        {% endfor %}
     </div>
     <main id="page">
         {% include main ignore missing +%}

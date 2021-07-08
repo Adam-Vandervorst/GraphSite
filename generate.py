@@ -19,46 +19,46 @@ class Generator:
         self.env = Environment(loader=FileSystemLoader([os.path.join(os.path.dirname(__file__), "templates"), pages_path]),
                                autoescape=False, trim_blocks=True, lstrip_blocks=True)
 
-    def save(self, path):
-        with open(path, 'w') as w_file:
-            json.dump(self.adjacency, w_file)
-
-    def partition_context(self, field_name):
-        field_page_ids = defaultdict(list)
-        for page in self.adjacency.values():
-            field_page_ids[getattr(page, field_name)].append(page.id)
-        return dict(field_type="partition", field_name=field_name, field_page_ids=field_page_ids, fields=field_page_ids.keys())
-
-    def label_context(self, field_name):
-        page_id_fields = {page.id: getattr(page, field_name) for page in self.adjacency.values()}
-        fields = {f for fs in page_id_fields.values() for f in fs}
-        return dict(field_type="label", field_name=field_name, page_id_fields=page_id_fields, fields=fields)
-
     def url_for(self, endpoint, **params):
         return f"/{endpoint.replace(' ', '-')*(endpoint != self.as_index)}{'?'*bool(params)}{'&'.join(f'{k}={v}' for k, v in params.items())}"
 
-    def make_view(self, name, context_type):
-        context = {'label': self.label_context, 'partition': self.partition_context}[context_type](name)
-        base = self.env.get_template(f"{context_type}.html")
-        return base.render(**context, pages=self.adjacency, url_for=self.url_for)
+    def partitions_view(self, field_name):
+        field_page_ids = defaultdict(list)
+        for page in self.adjacency.values():
+            field_page_ids[getattr(page, field_name)].append(page.id)
 
-    def pages_view(self, page_id):
+        base = self.env.get_template(f"partition.html")
+        return base.render(pages=self.adjacency, url_for=self.url_for,
+                           field_type="partition", field_name=field_name, field_page_ids=field_page_ids, fields=field_page_ids.keys())
+
+    def labels_view(self, field_name):
+        page_id_fields = {page.id: getattr(page, field_name) for page in self.adjacency.values()}
+        fields = {f for fs in page_id_fields.values() for f in fs}
+
+        base = self.env.get_template(f"label.html")
+        return base.render(pages=self.adjacency, url_for=self.url_for,
+                           field_type="label", field_name=field_name, page_id_fields=page_id_fields, fields=fields)
+
+    def pages_view(self, page_id, link_fields, partition_fields, label_fields):
         base = self.env.get_template("page.html")
-        return base.render(page=self.adjacency[page_id], pages=self.adjacency, main=f"{self.adjacency[page_id].data}.html", url_for=self.url_for)
+        return base.render(page=self.adjacency[page_id], pages=self.adjacency, main=f"{self.adjacency[page_id].data}.html", url_for=self.url_for,
+                           link_fields=link_fields, partition_fields=partition_fields, label_fields=label_fields)
 
-    def generate(self, out_path, **show):
-        for i, d in self.graph.get_info(self.tp3, 'id', 'data'):
-            filename = f"{'index' if d == self.as_index else d.replace(' ', '-')}.html"
+    def generate(self, out_path, links=(), partitions=(), labels=()):
+        for i, page in self.adjacency.items():
+            filename = f"{'index' if page.data == self.as_index else page.data.replace(' ', '-')}.html"
             with open(os.path.join(out_path, filename), 'w') as f:
-                f.write(self.pages_view(i))
+                f.write(self.pages_view(i, links, partitions, labels))
 
-        for i, d in self.graph.get_info(self.tp2, 'id', 'data'):
-            if d not in show: continue
-            filename = f"{d}-view.html"
-            with open(os.path.join(out_path, filename), 'w') as f:
-                f.write(self.make_view(d, show[d]))
+        for partition_name in partitions:
+            with open(os.path.join(out_path, f"{partition_name}.html"), 'w') as f:
+                f.write(self.partitions_view(partition_name))
+
+        for label_name in labels:
+            with open(os.path.join(out_path, f"{label_name}.html"), 'w') as f:
+                f.write(self.labels_view(label_name))
 
 
 if __name__ == '__main__':
     g = Generator("site_graph.json", as_index="Home")
-    g.generate("out", labels='label', date='partition')
+    g.generate("out", links=['related', 'inspired', 'subseded'], partitions=['date'], labels=['labels'])

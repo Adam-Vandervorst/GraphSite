@@ -5,11 +5,12 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
 class Generator:
-    def __init__(self, pages_dir="pages", as_index=None):
+    def __init__(self, pages_dir="pages", as_index=None, placeholder="placeholder.html"):
         self.as_index = as_index
+        self.placeholder = placeholder
         self.adjacency = {}
         templates_dir = os.path.join(os.path.dirname(__file__), "templates")
-        self.env = Environment(loader=FileSystemLoader([templates_dir, pages_dir]),
+        self.env = Environment(loader=FileSystemLoader([pages_dir, templates_dir]),
                                autoescape=False, trim_blocks=True, lstrip_blocks=True)
 
     @classmethod
@@ -46,8 +47,9 @@ class Generator:
 
     def pages_view(self, page_id, link_fields, partition_fields, label_fields):
         base = self.env.get_template("page.html")
-        return base.render(page=self.adjacency[page_id], pages=self.adjacency, main=f"{self.adjacency[page_id].data}.html", url_for=self.url_for,
-                           link_fields=link_fields, partition_fields=partition_fields, label_fields=label_fields)
+        return base.render(page=self.adjacency[page_id], pages=self.adjacency, url_for=self.url_for,
+                           link_fields=link_fields, partition_fields=partition_fields, label_fields=label_fields,
+                           main=f"{self.adjacency[page_id].data}.html", placeholder=self.placeholder)
 
     def generate(self, out_path, links=(), partitions=(), labels=()):
         for i, page in self.adjacency.items():

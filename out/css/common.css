@@ -1,7 +1,11 @@
 body {
-  --background-color: rgb(249, 249, 249);
-  --contrast-text: rgb(15, 15, 15);
-  --faint-text: #666;
+    --background-color: #faf9f8;
+    --medium-color: #aab;
+    --contrastive-color: #333;
+    --highlight-color: #c22;
+    --contrast-text: rgb(15, 15, 15);
+    --faint-text: #555;
+    font-family: system-ui, sans-serif;
 }
 
 .show_no_js {
@@ -9,9 +13,12 @@ body {
 }
 
 head.dark-mode + body {
-  --background-color: #222222;
-  --contrast-text: rgb(240, 240, 240);
-  --faint-text: #666;
+    --background-color: #222222;
+    --medium-color: #404044;
+    --contrastive-color: #ccc;
+    --highlight-color: #811;
+    --contrast-text: rgb(240, 240, 240);
+    --faint-text: #666;
 }
 
 body {
@@ -21,23 +28,34 @@ body {
 }
 
 footer {
-  position: fixed;
-  bottom: 0;
-  right: 0;
+    position: fixed;
+    bottom: 0;
+    right: 0;
 }
 
 footer * {
-  float: left;
-  margin: .25em .75em;
+    float: left;
+    padding: .25em .75em;
 }
 
-#personal_links {
-  /*color: var(--faint-text);*/
-  /*font-weight: bold;*/
-  padding: 0 2em;
+#contact {
+    padding-right: 2em;
 }
 
 button {
-  background-color: var(--background-color);
-  color: var(--faint-text);
+    background-color: var(--contrastive-color);
+    color: var(--background-color);
+    border: none;
+    margin-right: .75em;
+    padding: .5em;
+}
+
+button:hover, button:focus {
+    outline: none;
+    background-color: var(--highlight-color);
+}
+
+a:focus {
+    outline: none;
+    text-decoration: overline;
 }

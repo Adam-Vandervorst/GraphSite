@@ -26,19 +26,14 @@
 {% block body %}
 {% endblock %}
 <footer>
-    <nav id="personal_links">
-        <a>email</a>
-        <a>twitter</a>
-        <a>resume</a>
-    </nav>
-    {% if from_page_id is defined and from_page_id != None %}
-        <a href="/pages/{{ from_page_id }}">
-            {{ pages[from_page_id]['data'] }}
-        </a>
-    {% endif %}
+    <div id="contact">
+        <a href="#">E-mail</a>
+        <a href="#">Twitter</a>
+        <a href="#">Github</a>
+    </div>
 
     <button class="requires_js" onclick="localStorage.setItem('theme', document.head.classList.toggle('dark-mode') ? 'dark' : 'light')">
-        toggle dark
+        switch theme
     </button>
 </footer>
 </body>

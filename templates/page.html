@@ -6,19 +6,6 @@
 
 {% block body %}
 <div id="content_view">
-    <nav id="link_area">
-        {% for link_field in link_fields %}
-        <ul id="{{ link_field }}">
-            {% for rpage in page[link_field] %}
-            <li>
-                <a href="{{ url_for(rpage.data) }}">
-                    {{ rpage.data }}
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
-        {% endfor %}
-    </nav>
     <nav id="partition_area">
         {% for partition_field in partition_fields %}
         <a id="{{ partition_field }}" title="{{ partition_field }}" href="{{ url_for(partition_field, filter=page[partition_field], from_id=page.id) }}">
@@ -26,18 +13,31 @@
         </a>
         {% endfor %}
     </nav>
+    <nav id="link_area">
+    {% for link_field in link_fields %}
+        <ul id="{{ link_field }}" title="{{ link_field }}">
+        {%- for rpage in page[link_field] +%}
+            <li>
+                <a href="{{ url_for(rpage.data) }}">
+                    {{ rpage.data }}
+                </a>
+            </li>
+        {%+ endfor -%}
+        </ul>
+    {% endfor %}
+    </nav>
     <nav id="label_area">
-        {% for label_field in label_fields %}
-        <ul id="{{ label_field }}">
-            {% for label in page[label_field] %}
+    {% for label_field in label_fields %}
+        <ul id="{{ label_field }}" title="{{ label_field }}">
+        {%- for label in page[label_field] +%}
             <li>
                 <a href="{{ url_for(label_field, filter=label, from_id=page.id) }}">
                     {{ label }}
                 </a>
             </li>
-            {% endfor %}
+        {%+ endfor -%}
         </ul>
-        {% endfor %}
+    {% endfor %}
     </nav>
     <main>
         {% include [main, placeholder] +%}

@@ -8,7 +8,7 @@
 <div id="content_view">
     <nav id="partition_area">
         {% for partition_field in partition_fields %}
-        <a id="{{ partition_field }}" title="{{ partition_field }}" href="{{ url_for(partition_field, filter=page[partition_field], from_id=page.id) }}">
+        <a id="{{ partition_field }}" title="{{ partition_field }}" href="{{ url_for(partition_field, filter=page[partition_field]) }}">
             {{ page.date }}
         </a>
         {% endfor %}
@@ -31,7 +31,7 @@
         <ul id="{{ label_field }}" title="{{ label_field }}">
         {%- for label in page[label_field] +%}
             <li>
-                <a href="{{ url_for(label_field, filter=label, from_id=page.id) }}">
+                <a href="{{ url_for(label_field, filter=label) }}">
                     {{ label }}
                 </a>
             </li>

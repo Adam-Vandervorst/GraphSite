@@ -6,7 +6,7 @@
 
 {% block body %}
 <ol class="show_js">
-{% for field in fields %}
+{% for field in fields|sort %}
     <li>
         <button class="toggle" onclick="toggle('{{ field }}')">{{ field }}</button>
     </li>

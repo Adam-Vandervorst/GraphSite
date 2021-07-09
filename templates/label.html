@@ -19,13 +19,13 @@
 {% endblock %}
 {% block list %}
 <ol>
-{% for page_id, fields in page_id_fields.items() %}
+{% for page_id, fields in page_id_fields|dictsort %}
     <li class="show_no_js {{ fields | join(" ") }}">
         <a href="{{ url_for(pages[page_id].data) }}">
             {{ pages[page_id].data }}
         </a>
         <ul>
-        {% for field in fields %}
+        {% for field in fields|sort %}
             <li>
                 {{ field }}
             </li>

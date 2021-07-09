@@ -9,7 +9,7 @@
     <nav id="partition_area">
         {% for partition_field in partition_fields %}
         <a id="{{ partition_field }}" title="{{ partition_field }}" href="{{ url_for(partition_field, filter=page[partition_field]) }}">
-            {{ page.date }}
+            {{ page[partition_field] }}
         </a>
         {% endfor %}
     </nav>

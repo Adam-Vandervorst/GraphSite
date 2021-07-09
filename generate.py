@@ -26,7 +26,8 @@ class Generator:
         return ins
 
     def url_for(self, endpoint, **params):
-        return f"/{endpoint.replace(' ', '-')*(endpoint != self.as_index)}{'?'*bool(params)}{'&'.join(f'{k}={v}' for k, v in params.items())}"
+        url_params = '&'.join(f'{k}={v}' for k, vs in params.items() for v in (vs if isinstance(vs, tuple) else (vs,)))
+        return f"/{endpoint.replace(' ', '-')*(endpoint != self.as_index)}{'?'*bool(params)}{url_params}"
 
     def partitions_view(self, field_name):
         field_page_ids = defaultdict(list)

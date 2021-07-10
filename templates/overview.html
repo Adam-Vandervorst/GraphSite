@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-<ol class="show_js">
+<ol id="button_list" class="show_js">
 {% for field in fields|sort %}
     <li>
         <button class="toggle" onclick="toggle('{{ field }}')">{{ field }}</button>

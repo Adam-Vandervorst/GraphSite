@@ -18,7 +18,7 @@
 </script>
 {% endblock %}
 {% block list %}
-<ol>
+<ol id="page_list">
 {% for page, fields in page_fields|sort %}
     <li class="show_no_js {{ fields | join(" ") }}">
         <a href="{{ url_for(page.data) }}">

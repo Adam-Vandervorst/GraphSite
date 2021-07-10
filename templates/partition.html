@@ -13,13 +13,13 @@
 </script>
 {% endblock %}
 {% block list %}
-<ol>
+<ol id="field_list">
 {% for field, pages in field_pages|sort %}
     <li class="{{ field }}">
         <noscript>
             {{ field }}
         </noscript>
-        <ul>
+        <ul id="page_list">
         {% for page in pages|sort %}
             <li>
                 <a href="{{ url_for(page.data) }}">

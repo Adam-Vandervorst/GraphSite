@@ -19,7 +19,7 @@
         <noscript>
             {{ field }}
         </noscript>
-        <ul id="page_list">
+        <ul class="page_list">
         {% for page in pages|sort %}
             <li>
                 <a href="{{ url_for(page.data) }}">

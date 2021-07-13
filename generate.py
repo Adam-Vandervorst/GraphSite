@@ -5,10 +5,11 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
 class Generator:
-    def __init__(self, pages_dir="pages", as_index=None, placeholder="placeholder.html"):
+    def __init__(self, pages_dir="pages", as_index=None, placeholder="placeholder.html", safe_name=lambda s: s.replace(' ', '-')):
         self.pages_dir = pages_dir
         self.as_index = as_index
         self.placeholder = placeholder
+        self.safe_name = safe_name
         self.pages = []
         templates_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader([pages_dir, templates_dir]),
@@ -30,7 +31,7 @@ class Generator:
         from markdown import markdown
 
         for page in self.pages:
-            name = page.data.replace(' ', '-')
+            name = self.safe_name(page.data)
             if name in ignore_list: continue
             in_path = os.path.join(self.pages_dir, f"{name}.md")
             out_path = os.path.join(self.pages_dir, f"{name}.html")
@@ -40,7 +41,7 @@ class Generator:
 
     def url_for(self, endpoint, **params):
         url_params = '&'.join(f'{k}={v}' for k, vs in params.items() for v in (vs if isinstance(vs, tuple) else (vs,)))
-        return f"/{endpoint.replace(' ', '-')*(endpoint != self.as_index)}{'?'*bool(params)}{url_params}"
+        return f"/{self.safe_name(endpoint)*(endpoint != self.as_index)}{'?'*bool(params)}{url_params}"
 
     def partitions_view(self, field_name):
         field_pages = defaultdict(list)
@@ -63,11 +64,11 @@ class Generator:
         base = self.env.get_template("page.html")
         return base.render(page=page, url_for=self.url_for,
                            link_fields=link_fields, partition_fields=partition_fields, label_fields=label_fields,
-                           main=f"{page.data.replace(' ', '-')}.html", placeholder=self.placeholder)
+                           main=f"{self.safe_name(page.data)}.html", placeholder=self.placeholder)
 
     def generate(self, out_path, links=(), partitions=(), labels=()):
         for page in self.pages:
-            filename = f"{'index' if page.data == self.as_index else page.data.replace(' ', '-')}.html"
+            filename = f"{'index' if page.data == self.as_index else self.safe_name(page.data)}.html"
             with open(os.path.join(out_path, filename), 'w') as f:
                 f.write(self.pages_view(page, links, partitions, labels))
 

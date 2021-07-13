@@ -6,6 +6,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 class Generator:
     def __init__(self, pages_dir="pages", as_index=None, placeholder="placeholder.html"):
+        self.pages_dir = pages_dir
         self.as_index = as_index
         self.placeholder = placeholder
         self.pages = []
@@ -24,6 +25,18 @@ class Generator:
         ins = cls(**kwargs)
         ins.pages = graph.as_objects(tp1, tp2, tp3, struct)
         return ins
+
+    def convert_markdown(self, ignore_list=(), **md_options):
+        from markdown import markdown
+
+        for page in self.pages:
+            name = page.data.replace(' ', '-')
+            if name in ignore_list: continue
+            in_path = os.path.join(self.pages_dir, f"{name}.md")
+            out_path = os.path.join(self.pages_dir, f"{name}.html")
+            if not os.path.exists(in_path): continue
+            with open(in_path, 'r') as in_f, open(out_path, 'w') as out_f:
+                out_f.write(markdown(in_f.read(), **md_options))
 
     def url_for(self, endpoint, **params):
         url_params = '&'.join(f'{k}={v}' for k, vs in params.items() for v in (vs if isinstance(vs, tuple) else (vs,)))
@@ -50,7 +63,7 @@ class Generator:
         base = self.env.get_template("page.html")
         return base.render(page=page, url_for=self.url_for,
                            link_fields=link_fields, partition_fields=partition_fields, label_fields=label_fields,
-                           main=f"{page.data}.html", placeholder=self.placeholder)
+                           main=f"{page.data.replace(' ', '-')}.html", placeholder=self.placeholder)
 
     def generate(self, out_path, links=(), partitions=(), labels=()):
         for page in self.pages:
@@ -69,4 +82,5 @@ class Generator:
 
 if __name__ == '__main__':
     g = Generator.from_HEdit("site_graph.json", as_index="Home")
+    g.convert_markdown()
     g.generate("out", links=['related', 'inspired', 'subseded'], partitions=['date'], labels=['labels'])

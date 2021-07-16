@@ -16,9 +16,7 @@
 <ol id="field_list">
 {% for field, pages in field_pages|sort %}
     <li class="{{ field }}">
-        <noscript>
-            {{ field }}
-        </noscript>
+        <h2 class="show_no_js">{{ field }}</h2>
         <ul class="page_list">
         {% for page in pages|sort %}
             <li>

@@ -40,7 +40,7 @@ class Generator:
                 out_f.write(markdown(in_f.read(), **md_options))
 
     def url_for(self, endpoint, **params):
-        url_params = '&'.join(f'{k}={v}' for k, vs in params.items() for v in (vs if isinstance(vs, tuple) else (vs,)))
+        url_params = '&'.join(f'{k}={v}' for k, vs in params.items() for v in (vs if isinstance(vs, (tuple, list, set)) else (vs,)))
         return f"/{self.safe_name(endpoint)*(endpoint != self.as_index)}{'?'*bool(params)}{url_params}"
 
     def partitions_view(self, field_name):

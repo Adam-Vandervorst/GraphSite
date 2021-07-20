@@ -17,9 +17,13 @@
         </style>
     </noscript>
     <script>
-    if ((localStorage.getItem("theme") ||
-        (window.matchMedia("(prefers-color-scheme: dark)").matches && "dark")) == "dark")
-        document.head.classList.toggle("dark-mode")
+        const get_domain_name = hn => hn.substring(hn.lastIndexOf('.', hn.lastIndexOf('.') - 1) + 1)
+        const domain_name = get_domain_name(window.location.hostname)
+
+        cookieStore.get('theme')
+            .then(c => c.value)
+            .catch(e => window.matchMedia('(prefers-color-scheme: dark)').matches && 'dark')
+            .then(v => (v == 'dark') && document.head.classList.toggle('dark-mode'))
     </script>
 </head>
 <body>
@@ -32,7 +36,7 @@
         <a href="#">Github</a>
     </div>
 
-    <button class="show_js" onclick="localStorage.setItem('theme', document.head.classList.toggle('dark-mode') ? 'dark' : 'light')">
+    <button class="show_js" onclick="cookieStore.set({name: 'theme', sameSite: 'none', domain: domain_name, value: document.head.classList.toggle('dark-mode') ? 'dark' : 'light'})">
         switch theme
     </button>
 </footer>

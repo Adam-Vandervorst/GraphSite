@@ -11,6 +11,7 @@ class Generator:
         self.placeholder = placeholder
         self.safe_name = safe_name
         self.pages = []
+        self.contact = []
         templates_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader([pages_dir, templates_dir]),
                                autoescape=False, trim_blocks=True, lstrip_blocks=True)
@@ -46,6 +47,9 @@ class Generator:
             if internal_field:
                 setattr(name_page[name], internal_field, [name_page[name] for name in transformation.collected])
 
+    def add_contact(self, links):
+        self.contact = links
+
     def url_for(self, endpoint, **params):
         url_params = '&'.join(f'{k}={v}' for k, vs in params.items()
                               for v in (vs if isinstance(vs, (tuple, list, set)) else (vs,)))
@@ -57,7 +61,7 @@ class Generator:
             field_pages[getattr(page, field_name)].append(page)
 
         base = self.env.get_template(f"partition.html")
-        return base.render(url_for=self.url_for, field_type="partition",
+        return base.render(url_for=self.url_for, contact=self.contact, field_type="partition",
                            field_name=field_name, field_pages=field_pages.items(), fields=field_pages.keys())
 
     def labels_view(self, field_name):
@@ -65,12 +69,12 @@ class Generator:
         fields = {f for _, fs in page_fields for f in fs}
 
         base = self.env.get_template(f"label.html")
-        return base.render(url_for=self.url_for, field_type="label",
+        return base.render(url_for=self.url_for, contact=self.contact, field_type="label",
                            field_name=field_name, page_fields=page_fields, fields=fields)
 
     def pages_view(self, page, link_fields, partition_fields, label_fields):
         base = self.env.get_template("page.html")
-        return base.render(page=page, url_for=self.url_for,
+        return base.render(page=page, url_for=self.url_for, contact=self.contact,
                            link_fields=link_fields, partition_fields=partition_fields, label_fields=label_fields,
                            main=f"{self.safe_name(page.data)}.html", placeholder=self.placeholder)
 
@@ -92,4 +96,5 @@ class Generator:
 if __name__ == '__main__':
     g = Generator.from_HEdit("site_graph.json", as_index="Home")
     g.convert_markdown()
+    g.add_contact([("Github repo", "https://github.com/Adam-Vandervorst/GraphSite"), ("Landing page", "/")])
     g.generate("out", links=['related', 'inspired', 'subseded'], partitions=['date'], labels=['labels'])

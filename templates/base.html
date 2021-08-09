@@ -31,9 +31,9 @@
 {% endblock %}
 <footer>
     <div id="contact">
-        <a href="#">E-mail</a>
-        <a href="#">Twitter</a>
-        <a href="#">Github</a>
+        {% for label, url in contact %}
+        <a href="{{ url }}">{{ label }}</a>
+        {% endfor %}
     </div>
 
     <button class="show_js" onclick="cookieStore.set({name: 'theme', sameSite: 'none', domain: domain_name, value: document.head.classList.toggle('dark-mode') ? 'dark' : 'light'})">

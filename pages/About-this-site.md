@@ -6,5 +6,6 @@ Aliquam quis orci lobortis, semper ex sit amet, dictum turpis. Mauris id velit n
 Missing Test link: [Interesting-references](Interesting-references).
 Test link 1: [Home](Home).
 Test link 2: [GraphSite](GraphSite).
+Test link 3: [date](date).
 
 Extern link: [42](https://simple.wikipedia.org/wiki/42_(answer))

@@ -36,14 +36,15 @@ class Generator:
         name_page = {self.safe_name(page.data): page for page in self.pages}
         name_paths = {name: (os.path.join(self.pages_dir, f"{name}.md"), os.path.join(self.pages_dir, f"{name}.html")) for name in name_page}
         name_exists = {name: (os.path.exists(md), os.path.exists(html)) for name, (md, html) in name_paths.items()}
-        transformation = ProcessLinks({name: page for name, page in name_page.items() if any(name_exists[name])},
-                                      missing_pages_class, external_new_tab, internal_field)
+        transformation = ProcessLinks(name_exists, missing_pages_class, external_new_tab, internal_field is not None)
 
         for name, (in_path, out_path) in name_paths.items():
+            transformation.collected = []
             if name_exists[name][0]:
-                transformation.current_name = name
                 with open(in_path, 'r') as in_f, open(out_path, 'w') as out_f:
                     out_f.write(markdown(in_f.read(), extensions=[transformation]))
+            if internal_field:
+                setattr(name_page[name], internal_field, [name_page[name] for name in transformation.collected])
 
     def url_for(self, endpoint, **params):
         url_params = '&'.join(f'{k}={v}' for k, vs in params.items()

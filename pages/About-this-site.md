@@ -3,4 +3,8 @@ Mauris semper, ligula ut efficitur viverra, tellus dolor iaculis nunc, in cursus
 
 Aliquam quis orci lobortis, semper ex sit amet, dictum turpis. Mauris id velit nunc. Vivamus porttitor tincidunt dictum. Integer orci ante, lobortis at auctor mattis, ultrices quis mauris. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
-Test link: [GraphSite](/GraphSite).
+Missing Test link: [Interesting-references](Interesting-references).
+Test link 1: [Home](Home).
+Test link 2: [GraphSite](GraphSite).
+
+Extern link: [42](https://simple.wikipedia.org/wiki/42_(answer))

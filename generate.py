@@ -1,7 +1,7 @@
 import os
 from collections import defaultdict
 
-from jinja2 import Environment, FileSystemLoader, select_autoescape
+from jinja2 import Environment, FileSystemLoader
 
 
 class Generator:
@@ -16,31 +16,38 @@ class Generator:
                                autoescape=False, trim_blocks=True, lstrip_blocks=True)
 
     @classmethod
-    def from_HEdit(cls, graph_file, **kwargs):
+    def from_HEdit(cls, graph_file, custom_page_cls=None, **kwargs):
         from HEdit.utils import json, HDict
 
         graph = HDict.load_from_path(graph_file)
         tp1, tp2, tp3 = graph.node_types()
-        struct = graph.synthesize_structure(tp1, tp2, tp3)
-        struct.__lt__ = lambda x, y: x.data < y.data
+        if custom_page_cls:
+            page_cls = custom_page_cls
+        else:
+            struct = graph.synthesize_structure(tp1, tp2, tp3, "Page")
+            page_cls = type("Page", (struct,), {'__lt__': lambda x, y: x.data < y.data})
         ins = cls(**kwargs)
-        ins.pages = graph.as_objects(tp1, tp2, tp3, struct)
+        ins.pages = graph.as_objects(tp1, tp2, tp3, page_cls)
         return ins
 
-    def convert_markdown(self, ignore_list=(), **md_options):
-        from markdown import markdown
+    def convert_markdown(self, missing_pages_class="missing", external_new_tab=True, internal_field=None):
+        from process import markdown, ProcessLinks
 
-        for page in self.pages:
-            name = self.safe_name(page.data)
-            if name in ignore_list: continue
-            in_path = os.path.join(self.pages_dir, f"{name}.md")
-            out_path = os.path.join(self.pages_dir, f"{name}.html")
-            if not os.path.exists(in_path): continue
-            with open(in_path, 'r') as in_f, open(out_path, 'w') as out_f:
-                out_f.write(markdown(in_f.read(), **md_options))
+        name_page = {self.safe_name(page.data): page for page in self.pages}
+        name_paths = {name: (os.path.join(self.pages_dir, f"{name}.md"), os.path.join(self.pages_dir, f"{name}.html")) for name in name_page}
+        name_exists = {name: (os.path.exists(md), os.path.exists(html)) for name, (md, html) in name_paths.items()}
+        transformation = ProcessLinks({name: page for name, page in name_page.items() if any(name_exists[name])},
+                                      missing_pages_class, external_new_tab, internal_field)
+
+        for name, (in_path, out_path) in name_paths.items():
+            if name_exists[name][0]:
+                transformation.current_name = name
+                with open(in_path, 'r') as in_f, open(out_path, 'w') as out_f:
+                    out_f.write(markdown(in_f.read(), extensions=[transformation]))
 
     def url_for(self, endpoint, **params):
-        url_params = '&'.join(f'{k}={v}' for k, vs in params.items() for v in (vs if isinstance(vs, (tuple, list, set)) else (vs,)))
+        url_params = '&'.join(f'{k}={v}' for k, vs in params.items()
+                              for v in (vs if isinstance(vs, (tuple, list, set)) else (vs,)))
         return f"/{self.safe_name(endpoint)*(endpoint != self.as_index)}{'?'*bool(params)}{url_params}"
 
     def partitions_view(self, field_name):

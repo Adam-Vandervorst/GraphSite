@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 {% block header %}
     <title>{{ page[name_field] }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if description_field -%}
+        <meta name="description" content="{{ page[description_field] }}">
+    {%- endif %}
+    {% if label_fields -%}
+        <meta name="keywords" content="{% for label_field in label_fields %}{% for label in page[label_field] %}{{ label }}{% if not loop.last %}, {% endif %}{% endfor %}{% endfor %}">
+    {%- endif %}
     <link rel="stylesheet" href="css/page.css">
 {% endblock %}
 

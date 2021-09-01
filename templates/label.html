@@ -22,14 +22,14 @@
 {% for page, fields in page_fields|sort %}
     <li class="show_no_js {{ fields | join(" ") }}">
         <a href="{{ url_for(page[name_field]) }}">{{ page[name_field] }}</a>
-        {% if description_field -%}
-            <div class="description">{{ page[description_field] }}</div>
-        {%- endif %}
         <ul class="field_list">
         {% for field in fields|sort %}
             <li>{{ field }}</li>
         {% endfor %}
         </ul>
+        {% if description_field -%}
+            <div class="description">{{ page[description_field] }}</div>
+        {%- endif %}
     </li>
 {% endfor %}
 </ol>

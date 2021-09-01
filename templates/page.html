@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block header %}
-    <title>{{ page.data }}</title>
+    <title>{{ page[name_field] }}</title>
     <link rel="stylesheet" href="css/page.css">
 {% endblock %}
 
@@ -8,9 +8,7 @@
 <div id="content_view">
     <nav id="partition_area">
         {% for partition_field in partition_fields %}
-        <a id="{{ partition_field }}" title="{{ partition_field }}" href="{{ url_for(partition_field, filter=page[partition_field]) }}">
-            {{ page[partition_field] }}
-        </a>
+        <a id="{{ partition_field }}" title="{{ partition_field }}" href="{{ url_for(partition_field, filter=page[partition_field]) }}">{{ page[partition_field] }}</a>
         {% endfor %}
     </nav>
     <nav id="link_area">
@@ -18,9 +16,7 @@
         <ul id="{{ link_field }}" title="{{ link_field }}">
         {%- for rpage in page[link_field] +%}
             <li>
-                <a href="{{ url_for(rpage.data) }}">
-                    {{ rpage.data }}
-                </a>
+                <a href="{{ url_for(rpage[name_field]) }}">{{ rpage[name_field] }}</a>
             </li>
         {%+ endfor -%}
         </ul>
@@ -31,9 +27,7 @@
         <ul id="{{ label_field }}" title="{{ label_field }}">
         {%- for label in page[label_field] +%}
             <li>
-                <a href="{{ url_for(label_field, filter=label) }}">
-                    {{ label }}
-                </a>
+                <a href="{{ url_for(label_field, filter=label) }}">{{ label }}</a>
             </li>
         {%+ endfor -%}
         </ul>

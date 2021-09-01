@@ -12,6 +12,8 @@ class Generator:
         self.safe_name = safe_name
         self.pages = []
         self.contact = []
+        self.info = {"name_field": None, "description_field": None}
+        self.structure = {"link_fields": [], "partition_fields": [], "label_fields": []}
         templates_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader([pages_dir, templates_dir]),
                                autoescape=False, trim_blocks=True, lstrip_blocks=True)
@@ -28,7 +30,7 @@ class Generator:
             struct = graph.synthesize_structure(tp1, tp2, tp3, "Page")
             page_cls = type("Page", (struct,), {'__lt__': lambda x, y: x.data < y.data})
         ins = cls(**kwargs)
-        ins.pages = graph.as_objects(tp1, tp2, tp3, page_cls)
+        ins.add_pages(graph.as_objects(tp1, tp2, tp3, page_cls))
         return ins
 
     def convert_markdown(self, missing_pages_class="missing", external_new_tab=True, internal_field=None):
@@ -47,8 +49,20 @@ class Generator:
             if internal_field:
                 setattr(name_page[name], internal_field, [name_page[name] for name in transformation.collected])
 
+    def add_pages(self, pages):
+        self.pages.extend(pages)
+
     def add_contact(self, links):
-        self.contact = links
+        self.contact.extend(links)
+
+    def add_info(self, name=None, description=None):
+        if name: self.info['name_field'] = name
+        if description: self.info['description_field'] = description
+
+    def add_structure(self, links=(), partitions=(), labels=()):
+        self.structure["link_fields"].extend(links)
+        self.structure["partition_fields"].extend(partitions)
+        self.structure["label_fields"].extend(labels)
 
     def url_for(self, endpoint, **params):
         url_params = '&'.join(f'{k}={v}' for k, vs in params.items()
@@ -61,7 +75,7 @@ class Generator:
             field_pages[getattr(page, field_name)].append(page)
 
         base = self.env.get_template(f"partition.html")
-        return base.render(url_for=self.url_for, contact=self.contact, field_type="partition",
+        return base.render(url_for=self.url_for, contact=self.contact, field_type="partition", **self.info,
                            field_name=field_name, field_pages=field_pages.items(), fields=field_pages.keys())
 
     def labels_view(self, field_name):
@@ -69,26 +83,25 @@ class Generator:
         fields = {f for _, fs in page_fields for f in fs}
 
         base = self.env.get_template(f"label.html")
-        return base.render(url_for=self.url_for, contact=self.contact, field_type="label",
+        return base.render(url_for=self.url_for, contact=self.contact, field_type="label", **self.info,
                            field_name=field_name, page_fields=page_fields, fields=fields)
 
-    def pages_view(self, page, link_fields, partition_fields, label_fields):
+    def pages_view(self, page):
         base = self.env.get_template("page.html")
-        return base.render(page=page, url_for=self.url_for, contact=self.contact,
-                           link_fields=link_fields, partition_fields=partition_fields, label_fields=label_fields,
+        return base.render(page=page, url_for=self.url_for, contact=self.contact, **self.info, **self.structure,
                            main=f"{self.safe_name(page.data)}.html", placeholder=self.placeholder)
 
-    def generate(self, out_path, links=(), partitions=(), labels=()):
+    def generate(self, out_path):
         for page in self.pages:
             filename = f"{'index' if page.data == self.as_index else self.safe_name(page.data)}.html"
             with open(os.path.join(out_path, filename), 'w') as f:
-                f.write(self.pages_view(page, links, partitions, labels))
+                f.write(self.pages_view(page))
 
-        for partition_name in partitions:
+        for partition_name in self.structure["partition_fields"]:
             with open(os.path.join(out_path, f"{partition_name}.html"), 'w') as f:
                 f.write(self.partitions_view(partition_name))
 
-        for label_name in labels:
+        for label_name in self.structure["label_fields"]:
             with open(os.path.join(out_path, f"{label_name}.html"), 'w') as f:
                 f.write(self.labels_view(label_name))
 
@@ -97,4 +110,6 @@ if __name__ == '__main__':
     g = Generator.from_HEdit("site_graph.json", as_index="Home")
     g.convert_markdown()
     g.add_contact([("Github repo", "https://github.com/Adam-Vandervorst/GraphSite"), ("Landing page", "/")])
-    g.generate("out", links=['related', 'inspired', 'subseded'], partitions=['date'], labels=['labels'])
+    g.add_info(name='data', description='description')
+    g.add_structure(links=['related', 'inspired', 'subseded'], partitions=['date'], labels=['labels'])
+    g.generate("out")

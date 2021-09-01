@@ -20,9 +20,10 @@
         <ul class="page_list">
         {% for page in pages|sort %}
             <li>
-                <a href="{{ url_for(page.data) }}">
-                    {{ page.data }}
-                </a>
+                <a href="{{ url_for(page[name_field]) }}">{{ page[name_field] }}</a>
+                {% if description_field -%}
+                    <div class="description">{{ page[description_field] }}</div>
+                {%- endif %}
             </li>
         {% endfor %}
         </ul>

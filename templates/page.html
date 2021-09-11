@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block header %}
     <title>{{ page[name_field] }}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% if description_field -%}
         <meta name="description" content="{{ page[description_field] }}">
     {%- endif %}

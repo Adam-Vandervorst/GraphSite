@@ -33,13 +33,13 @@ class Generator:
         ins.add_pages(graph.as_objects(tp1, tp2, tp3, page_cls))
         return ins
 
-    def convert_markdown(self, missing_pages_class="missing", external_new_tab=True, internal_field=None):
+    def convert_markdown(self, id_titles=(2, 3), missing_pages_class="missing", external_new_tab=True, internal_field=None):
         from process import markdown, ProcessLinks
 
         name_page = {self.safe_name(page.data): page for page in self.pages}
         name_paths = {name: (os.path.join(self.pages_dir, f"{name}.md"), os.path.join(self.pages_dir, f"{name}.html")) for name in name_page}
         name_exists = {name: (os.path.exists(md), os.path.exists(html)) for name, (md, html) in name_paths.items()}
-        transformation = ProcessLinks(name_exists, missing_pages_class, external_new_tab, internal_field is not None)
+        transformation = ProcessLinks(name_exists, id_titles, missing_pages_class, external_new_tab, internal_field is not None)
 
         for name, (in_path, out_path) in name_paths.items():
             transformation.collected = []

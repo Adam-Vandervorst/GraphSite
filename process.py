@@ -59,6 +59,7 @@ class ProcessLinks(Extension, Treeprocessor):
         s = code_elem.text
         for c in self.wbr_after: s = s.replace(c, c + self.wbr)
         for c in self.wbr_before: s = s.replace(c, self.wbr + c)
+        s = s.replace(' ' + self.wbr, ' ').replace(self.wbr + ' ', ' ')
         code_elem.text = s.replace(self.wbr*2, '')
 
     def extendMarkdown(self, md):

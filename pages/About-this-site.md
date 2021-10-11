@@ -10,3 +10,5 @@ Test link 2: [GraphSite](GraphSite).
 Test link 3: [date](date).
 
 Extern link: [42](https://simple.wikipedia.org/wiki/42_(answer))
+
+`for wordy_variable, with_break_opportunity in collection: longfunctionname(extremelylongfunctionname(with_break_opportunity()))`

@@ -45,7 +45,7 @@ class Generator:
             transformation.collected = []
             if name_exists[name][0]:
                 with open(in_path, 'r') as in_f, open(out_path, 'w') as out_f:
-                    out_f.write(markdown(in_f.read(), extensions=[transformation]))
+                    out_f.write(markdown(in_f.read(), extensions=[transformation, "fenced_code"]))
             if internal_field:
                 setattr(name_page[name], internal_field, [name_page[name] for name in transformation.collected])
 

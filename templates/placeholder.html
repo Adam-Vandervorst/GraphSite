@@ -1,3 +1,4 @@
-<h2>
-    Under construction.
-</h2>
+<h1>{{ page[name_field] }}</h1>
+{% if description_field -%}
+    <h2>{{ page[description_field] }}</h2>
+{%- endif %}
